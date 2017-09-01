@@ -1,0 +1,193 @@
+import java.security.InvalidKeyException
+
+apply plugin: 'com.android.application'
+apply plugin: 'pmd'
+apply plugin: 'com.squareup.sqldelight'
+
+// Extra properties
+ext {
+    //Using semantic versioning
+    buildMajorVersion = 1
+    buildMinorVersion = 0
+    buildPatchVersion = 0
+
+    androidSupportVersion = "26.0.1"
+    retrofit2Version = "2.2.0"
+    rxAndroidVersion = "2.0.1"
+    rxJavaVersion = "2.1.0"
+    okHTTPVersion = "3.6.0"
+    dagger2Version = "2.10"
+    butterknifeVersion = "8.7.0"
+    simpleStackVersion = "1.6.1"
+    sqlBriteVersion = "1.1.1"
+    autoValueVersion = "1.4.1"
+    autoValueGsonVersion = "0.4.6"
+    autoValueParcelVersion = "0.2.5"
+    retrofitAdapterVersion = "1.0.0"
+    gsonVersion = "2.8.0"
+
+    //Unit testing
+    junitVersion = "4.12"
+    mockitoVersion = "2.5.5"
+}
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion "26.0.1"
+    defaultConfig {
+        applicationId "com.ninjahoahong.readmore"
+        minSdkVersion 16
+        targetSdkVersion 26
+        versionCode 1
+        versionName "${buildMajorVersion}.${buildMinorVersion}.${buildPatchVersion}"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("long", "MAX_HTTP_CACHE_SIZE", "10 * 1024 * 1024") // 10 MB of HTTP cache
+        buildConfigField("String", "API_BASE_URL", '"https://www.googleapis.com/books/v1/"')
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ['autovaluegson.defaultCollectionsToEmpty': 'true']
+            }
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    signingConfigs {
+        release {
+            try {
+                storeFile file("demo.keystore")
+                storePassword KEYSTORE_PASSWORD
+                keyAlias "demo"
+                keyPassword KEY_PASSWORD
+            }
+            catch (ex) {
+                throw new InvalidKeyException("You should define KEYSTORE_PASSWORD and KEY_PASSWORD in gradle.properties.")
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField("okhttp3.logging.HttpLoggingInterceptor.Level", "REST_ADAPTER_LOG_LEVEL", "okhttp3.logging.HttpLoggingInterceptor.Level.NONE")
+        }
+        debug {
+            buildConfigField("okhttp3.logging.HttpLoggingInterceptor.Level", "REST_ADAPTER_LOG_LEVEL", "okhttp3.logging.HttpLoggingInterceptor.Level.BODY")
+        }
+    }
+
+    packagingOptions {
+        exclude 'LICENSE.txt'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/INDEX.LIST'
+        exclude 'META-INF/javamail.providers'
+        exclude 'META-INF/services/javax.annotation.processing.Processor'
+        exclude 'META-INF/rxjava.properties'
+    }
+
+    lintOptions {
+        // https://github.com/square/okio/issues/58
+        warning 'InvalidPackage'
+    }
+
+    testOptions {
+        unitTests.all {
+            // All the usual Gradle options.
+            testLogging {
+                events "passed", "skipped", "failed", "standardOut", "standardError"
+                outputs.upToDateWhen { false }
+                showStandardStreams = true
+            }
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    // Test dependencies
+    testCompile "junit:junit:${junitVersion}"
+    testCompile "org.mockito:mockito-core:${mockitoVersion}"
+
+    // Support libraries
+    compile "com.android.support:appcompat-v7:${androidSupportVersion}"
+    compile "com.android.support:design:${androidSupportVersion}"
+    compile "com.android.support:recyclerview-v7:${androidSupportVersion}"
+    compile "com.android.support:cardview-v7:${androidSupportVersion}"
+    compile "com.android.support:support-v4:${androidSupportVersion}"
+
+    // Networking
+    compile "com.squareup.okhttp3:okhttp:${okHTTPVersion}"
+    compile "com.squareup.okhttp3:logging-interceptor:${okHTTPVersion}"
+    compile "com.squareup.retrofit2:retrofit:${retrofit2Version}"
+    compile "com.squareup.retrofit2:converter-gson:${retrofit2Version}"
+    compile "com.jakewharton.retrofit:retrofit2-rxjava2-adapter:${retrofitAdapterVersion}"
+
+    // Back stack
+    compile "com.github.Zhuinden:simple-stack:${simpleStackVersion}"
+
+    // Add dagger2 dependency for inject dependencies
+    annotationProcessor "com.google.dagger:dagger-compiler:${dagger2Version}"
+    compile "com.google.dagger:dagger:${dagger2Version}"
+    compile "com.google.dagger:dagger-android-support:${dagger2Version}"
+
+    //RxAndroid and RxJava
+    compile "io.reactivex.rxjava2:rxandroid:${rxAndroidVersion}"
+    compile "io.reactivex.rxjava2:rxjava:${rxJavaVersion}"
+
+    // Butterknife for binding view
+    compile "com.jakewharton:butterknife:${butterknifeVersion}"
+    annotationProcessor "com.jakewharton:butterknife-compiler:${butterknifeVersion}"
+
+    // Database
+    compile "com.squareup.sqlbrite:sqlbrite:${sqlBriteVersion}"
+
+    //AutoValue
+    provided "com.google.auto.value:auto-value:${autoValueVersion}"
+    annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
+    annotationProcessor 'com.ryanharter.auto.value:auto-value-parcel:' + autoValueParcelVersion
+    compile 'com.ryanharter.auto.value:auto-value-parcel-adapter:' + autoValueParcelVersion
+    annotationProcessor 'com.ryanharter.auto.value:auto-value-gson:' + autoValueGsonVersion
+    provided 'com.ryanharter.auto.value:auto-value-gson:' + autoValueGsonVersion
+    compile 'com.google.code.gson:gson:' + gsonVersion
+
+    // Image handling with glide
+    compile 'com.github.bumptech.glide:glide:4.0.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0'
+    provided 'com.github.bumptech.glide:compiler:4.0.0'
+}
+
+task pmd(type: Pmd) {
+    ruleSetFiles = files("${project.rootDir}/pmd-ruleset.xml")
+    ignoreFailures = false
+    ruleSets = []
+
+    source 'src'
+    include '**/*.java'
+    exclude '**/gen/**'
+
+    reports {
+        xml.enabled = false
+        html.enabled = true
+        xml {
+            destination "$project.buildDir/reports/pmd/pmd.xml"
+        }
+        html {
+            destination "$project.buildDir/reports/pmd/pmd.html"
+        }
+    }
+}
+
+pmd {
+    toolVersion = '5.6.1'
+}
+repositories {
+    mavenCentral()
+}

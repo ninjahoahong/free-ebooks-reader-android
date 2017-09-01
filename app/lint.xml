@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="UnusedResources">
+        <ignore path="**/generated/**" />
+    </issue>
+    <issue id="LogNotTimber">
+        <ignore path="**/generated/**" />
+    </issue>
+    <issue id="OldTargetApi" severity="informational"/>
+    <issue id="GradleDependency" severity="informational" />
+    <issue id="AllowBackup" severity="informational" />
+    
+    <!-- These need to be corrected when we support internationalization -->
+    <issue id="RtlHardcoded" severity="ignore"/>
+    <issue id="RtlEnabled" severity="ignore"/>
+    <issue id="PluralsCandidate" severity="ignore"/>
+
+    <!-- We should test accessibility some day -->
+    <issue id="ClickableViewAccessibility" severity="ignore"/>
+    <issue id="ContentDescription" severity="ignore"/>
+    <issue id="LabelFor" severity="ignore"/>
+
+    <!-- Layout issues should be fine if you know what you are doing -->
+    <issue id="RelativeOverlap" severity="informational"/>
+    <issue id="RtlSymmetry" severity="informational"/>
+
+    <!-- FIXME: this should be warning and suppressed for each place but a bug prevents this usage pattern -->
+    <!-- https://code.google.com/p/android/issues/detail?id=169879 -->
+    <issue id="Overdraw" severity="informational"/>
+
+    <!-- FIXME: when new landing image is available -->
+    <issue id="IconLocation">
+        <ignore path="res/drawable/landing_bg.jpg" />
+    </issue>
+
+</lint>
