@@ -3,10 +3,8 @@ package com.ninjahoahong.readmore;
 
 import android.content.Context;
 
-import com.ninjahoahong.readmore.bookslist.views.BooksListViewKey;
 import com.ninjahoahong.readmore.utils.schedulers.BaseSchedulerProvider;
 import com.ninjahoahong.readmore.utils.schedulers.SchedulerProvider;
-import com.zhuinden.simplestack.Backstack;
 
 import javax.inject.Singleton;
 
@@ -18,7 +16,6 @@ import io.reactivex.disposables.CompositeDisposable;
 @Module
 public class AppModule {
     private final Context context;
-    private Backstack backstack;
     private CompositeDisposable compositeDisposable;
     private static SchedulerProvider schedulerProvider;
 
@@ -38,15 +35,6 @@ public class AppModule {
             compositeDisposable = new CompositeDisposable();
         }
         return compositeDisposable;
-    }
-
-    @Provides
-    @Singleton
-    Backstack provideBackStackHolder() {
-        if (backstack == null) {
-            backstack = new Backstack(BooksListViewKey.create());
-        }
-        return backstack;
     }
 
     @Provides

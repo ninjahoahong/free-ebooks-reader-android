@@ -8,7 +8,7 @@ import com.ninjahoahong.readmore.utils.Key;
 @AutoValue
 public abstract class BookViewKey extends Key {
 
-    abstract Book book();
+    public abstract Book book();
 
     @Override
     public int layout() {

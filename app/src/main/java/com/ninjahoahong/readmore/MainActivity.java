@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.FrameLayout;
 
@@ -27,20 +26,16 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.views_container)
     FrameLayout appContainer;
 
-    @Inject
-    Backstack backstack;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         AndroidApp.getAppComponent().inject(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        Navigator.configure()
+        Backstack backstack = Navigator.configure()
                 .setStateChanger(DefaultStateChanger.create(this, appContainer))
                 .install(this, appContainer, HistoryBuilder.single(
                         BooksListViewKey.create()));
-        backstack = Navigator.getBackstack(this);
     }
 
     @Override

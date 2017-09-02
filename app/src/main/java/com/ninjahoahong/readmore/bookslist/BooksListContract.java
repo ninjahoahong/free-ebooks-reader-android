@@ -1,5 +1,6 @@
 package com.ninjahoahong.readmore.bookslist;
 
+import android.content.Context;
 import android.support.v7.util.DiffUtil;
 import android.util.Pair;
 
@@ -15,6 +16,8 @@ public interface BooksListContract {
         void setLoading(boolean isLoading);
 
         void showError(String message);
+
+        Context getContext();
 
         void showBooksList(Pair<DiffUtil.DiffResult, List<Book>> books);
 

@@ -32,5 +32,6 @@ public class BookView extends FrameLayout {
     }
 
     public void init(Context context, AttributeSet attrs) {
+
     }
 }
